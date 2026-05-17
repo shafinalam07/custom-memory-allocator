@@ -1,33 +1,33 @@
 # Custom Memory Allocator (Building my_malloc and my_free)
 
 ## What it does
-Instead of just using the standard `malloc()` and `free()` functions from `stdlib.h`, I built my own memory allocator from scratch in C! 
+Instead of just using the normal `malloc()` and `free()` functions that come with C, I built my own version from scratch! 
 
-This project sets up a pre-allocated 10KB array to simulate the system heap. It uses a Singly Linked List under the hood where each node acts as a "metadata header" that tracks the size and availability of the memory blocks right before the actual data space.
+This program creates a fixed 10KB array to act as a mini fake heap memory. It uses a Singly Linked List to keep track of this memory. Every time you ask for space, a small "header" node is placed right before your data to store how big the block is and whether it is being used or free.
 
 ## Why I built this
-I built this project to deeply understand:
-1. How heap memory management actually works at a low level.
-2. Pointer arithmetic and Type Casting (`void*` to `char*` transitions).
-3. How to solve memory fragmentation problems manually.
+I built this project to understand what happens behind the scenes when a computer allocates memory. It helped me learn:
+1. **How the Heap Works:** Managing memory manually without relying on standard built-in shortcuts.
+2. **Pointer Practice:** Getting comfortable with pointer arithmetic and changing data types (like `void*` and `char*`).
+3. **Fixing Wasted Space:** Learning how to clean up memory clutter (fragmentation) so the program runs efficiently.
 
 ## Features
-- **First-Fit Strategy:** Scans the memory pool linearly and picks the first free block that is big enough for the requested size.
-- **Block Splitting:** If a free block is way larger than what the user asked for, the allocator splits it into two parts—one allocated chunk and one new smaller free chunk—to prevent wasting space inside the block.
-- **Automated Coalescing (Merging):** When you free a pointer, the system sweeps through the linked list and automatically merges adjacent free blocks together to prevent external fragmentation.
+- **First-Fit Searching:** It loops through the memory list from the start and grabs the very first free spot that is big enough for your data.
+- **Splitting Blocks:** If a free spot is way bigger than what you asked for, the program cuts it in half. One half goes to your data, and the other half stays free so space isn't wasted.
+- **Merging Blocks (Coalescing):** When you free up a pointer, the program automatically looks left and right. If the neighboring blocks are also empty, it merges them back into one big clean block.
 
-## How to run
+## How to run it
 1. Open your terminal inside this folder and compile the code:
    gcc allocator.c -o allocator
 
-2. Run the compiled executable:
+2. Run the program:
    ./allocator
 
-## Tech used
+## Tech Used
 - C Language
 - GCC Compiler
-- Data Structures (Singly Linked Lists & Dynamic Memory Concepts)
+- Core Concepts: Pointers, Singly Linked Lists, and Memory Allocation
 
 ## Author
 Shafin Alam
-GitHub: shafinalam07
+GitHub: [shafinalam07](https://github.com/shafinalam07)
