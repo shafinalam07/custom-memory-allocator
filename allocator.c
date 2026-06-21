@@ -50,6 +50,45 @@ void* my_malloc(size_t size) {
     return NULL;
 }
 
+// Worst-Fit memory allocation engine
+void* worst_fit_malloc(size_t size){
+    Block* largest = NULL;
+    // Largest refers to the largest available free block found in the list
+
+    Block* curr = free_list;
+    while(curr != NULL){
+        if(curr->is_free && curr->size >= size){
+            if(largest == NULL){
+                largest = curr; // First valid block becomes largest, then compared in the else clause in the next iterations
+            } else{
+                if(curr->size > largest->size){
+                    largest = curr;
+                }
+            }
+        }
+        curr = curr->next;
+    }
+
+    if(largest == NULL){
+        printf("System Error: Out of Memory! Allocation failed for %zu bytes.\n", size);
+        return NULL;
+    }
+
+    if(largest->size >= size + sizeof(Block) + 4){
+        // Check if the block can be split into a smaller allocated chunk and a new free block
+        Block* new_block = (Block*)((char*)largest + sizeof(Block) + size);
+        new_block->size = largest->size - size - sizeof(Block);
+        new_block->is_free = true;
+        new_block->next = largest->next;
+
+        largest->size = size;
+        largest->next = new_block;
+    }
+
+    largest->is_free = false;
+    return (void*)((char*)largest+ sizeof(Block));
+}
+
 // Releases memory and immediately triggers a coalescing sweep
 void my_free(void* ptr) {
     if (ptr == NULL) return;
@@ -93,7 +132,7 @@ int main() {
     print_heap_status();
 
     printf("\n[Action 2]: Requesting workspace logging buffer (Requesting 200 Bytes)...\n");
-    char* log_buffer = (char*)my_malloc(200 * sizeof(char));
+    char* log_buffer = (char*)worst_fit_malloc(200 * sizeof(char)); // Tried worst fit here
     print_heap_status();
 
     printf("\n[Action 3]: Freeing data array allocation node...\n");
